@@ -1,0 +1,25 @@
+* Coummunication Start
+  - SCL is high and SDA is pulled low
+  - Then SCL is pulled low 
+* ADDRESS frame 
+  - 7 bit address frame is sent 
+  - MSB is send first
+  - followed by a R/W bit (0 - write , 1 - read)
+  - NACK/ACK bit (recieve) Reciver should pull the SDA down bfr the Clock cycle ends
+  - The data exchange halts in case it is not recived
+* Data frame
+  - Control will be generating clock pulses
+  - depending upon the R/W bit the controller recieves or transmists 
+* Stop Condition
+  - After everything is recived the stop condition is generated
+  - 0-> 1 on SDA after 0-> 1 on SCL
+* TODO
+- Make state diagram for reciving data 
+
+** ALGO for data reciving post start bit verification
+   - [counter for getting serial data]
+   - get 7 bit address and compare it with the device address
+   --- if it is same move ahead or ignore
+   - get 8 bit data and display it and send ACK
+   - stop after detecting the stop sequence
+
