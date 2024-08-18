@@ -1,8 +1,5 @@
-// Code your testbench here
-// or browse Examples
 
-
-//`timescale 1ns / 1ps
+`timescale 1ns / 1ps
 
 module top_tb ();
 
@@ -25,9 +22,10 @@ reg r_Clock = 0;
    
   reg [6:0] addressToSend 	= 7'b1000111; 	//101_1011
   reg readWite 				= 1'b0; 		//write
-  reg [7:0] dataToSend 		= 8'b0110_0111; //103 = 0x67
-  
-  wire ack_bit;
+  reg [7:0] dataToSend1 		= 8'b0110_0111; //103 = 0x67
+  reg [7:0] dataToSend2 		= 8'd20; 
+   reg [7:0] dataToSend3 		= 8'd30; 
+ wire ack_bit;
   wire [7:0] out;
   reg rst;
   integer ii=7;
@@ -80,20 +78,32 @@ reg r_Clock = 0;
       //#20; // Wait for ACK bit
       for(ii=7; ii>=0; ii=ii-1)
         begin
-          $display("Data SDA %h to %h", SDA, dataToSend[ii]);
-          #20 force SDA = dataToSend[ii];
+      //    $display("Data SDA %h to %h", SDA, dataToSend[ii]);
+          #20 force SDA = dataToSend1[ii];
+        end 
+#20;force SDA =0;
+
+            
+      for(ii=7; ii>=0; ii=ii-1)
+        begin
+ //         $display("Data SDA %h to %h", SDA, dataToSend[ii]);
+          #20 force SDA = dataToSend2[ii];
         end
       
       #20;force SDA =0; // Wait for ACK bit
-      
-       // Next SDA will be driven by slave, so release it
-      //release SDA;
-      force SDA = 0;
-      #10 
+            
+      for(ii=7; ii>=0; ii=ii-1)
+        begin
+   //       $display("Data SDA %h to %h", SDA, dataToSend[ii]);
+          #20 force SDA = dataToSend3[ii];
+        end 
+
+#20;force SDA =0; 
+#30 
       
       // Force SDA high again, we are done
      force SDA = 1;
-      #200;
+      #1000;
       $finish();
     end
   
