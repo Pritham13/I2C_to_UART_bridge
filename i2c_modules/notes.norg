@@ -14,7 +14,8 @@
   - After everything is recived the stop condition is generated
   - 0-> 1 on SDA after 0-> 1 on SCL
 * TODO
-  () figure out how to drive SDA
+  - (x) figure out how to drive SDA 
+
 
 ** ALGO for data reciving post start bit verification
    - [counter for getting serial data]

@@ -1,0 +1,1 @@
+iverilog -Wall -g2012 i2c_tb_3.v i2c_slave1.v && ./a.out && gtkwave dump.vcd && rm dump.vcd
