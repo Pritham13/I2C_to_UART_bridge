@@ -6,15 +6,14 @@ module i2c_slave(
 );
 parameter [6:0] device_address = 7'b1000111;
 
-parameter [2:0] STATE_IDLE      = 3'd0,//idle
-                STATE_DEV_ADDR  = 3'd1,//the slave addr match
-                STATE_READ      = 3'd2,//the op=read 
-                STATE_IDX_PTR   = 3'd3,//get the index of inner-register
-                STATE_WRITE     = 3'd4;//write the data in the reg 
+parameter [1:0] STATE_IDLE      = 2'd0,//idle
+                STATE_DEV_ADDR  = 2'd1,//the slave addr match
+                STATE_READ      = 2'd2,//the op=read 
+                STATE_WRITE     = 2'd3;//write the data in the reg 
 
 wire start_rst;
 wire stop_rst;
-//wire add_act_bit;
+//wire addr_act_bit;
 //wire ack_bit;
 wire address_detect;
 wire read_write_bit;
@@ -22,7 +21,7 @@ wire write_strobe;
 wire [6:0]addr_buffer;
 wire [7:0]out_buffer;
 
-reg add_act_bit;
+reg addr_act_bit;
 reg start_detect;
 reg start_resetter;
 reg stop_detect;
@@ -33,11 +32,9 @@ reg [3:0]bit_counter;
 // Assignments
 assign start_rst = RST | start_resetter; // Detect the START for one cycle
 assign stop_rst = RST | stop_resetter;   // Detect the STOP for one cycle
-//assign add_act_bit = (bit_counter == 4'd6) && !start_detect && (state == STATE_DEV_ADDR); // the 8 bits one-byte data
 assign ack_bit = (bit_counter == 4'd9) && !start_detect; // The 9 bits ACK
 assign address_detect = (addr_buffer == device_address); // The input address matches the slave
 assign read_write_bit = SDA; // The write or read operation 0=write and 1=read
-assign write_flag = (state == STATE_WRITE) && ack_bit; // Write state and finish one byte = 8 bits
 assign addr_buffer = buffer[6:0];
 assign out_buffer = buffer[7:0];
 assign out = (ack_bit) ? buffer[7:0] : 0 ;
@@ -70,7 +67,7 @@ begin
                 state <= STATE_IDLE;
         else if (start_detect)
                 state <= STATE_DEV_ADDR;
-        else if (add_act_bit)//at the 9th cycle and change the state by ACK
+        else if (addr_act_bit)//at the 9th cycle and change the state by ACK
         begin
                 case (state)
                 STATE_IDLE:
@@ -118,7 +115,7 @@ end
 /////////////////////count data ////////////// 
 always @ (posedge SCL)
 begin
-        if ( add_act_bit || ack_bit || start_detect || (state == STATE_IDLE))
+        if ( addr_act_bit || ack_bit || start_detect || (state == STATE_IDLE))
                 bit_counter <= 4'h0;
         else
                 bit_counter <= bit_counter + 4'h1;
@@ -137,5 +134,5 @@ always @ (posedge SCL)
 
   /////////////////////////////////////////////////////// 
 always @ (posedge SCL)
-   add_act_bit = (bit_counter == 4'd5) && !start_detect && (state == STATE_DEV_ADDR);
+   addr_act_bit = (bit_counter == 4'd5) && !start_detect && (state == STATE_DEV_ADDR);
 endmodule
