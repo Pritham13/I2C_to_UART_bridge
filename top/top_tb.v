@@ -38,10 +38,10 @@ module top_tb ();
 
   
   top UUT
-    (.SDA(SDA),
-     .SCL(SCL),
-     .reset(rst),
-     .TX(TX)
+    (.i_SDA(SDA),
+     .i_SCL(SCL),
+     .i_reset(rst),
+     .o_TX(TX)
     );
 
   initial 
