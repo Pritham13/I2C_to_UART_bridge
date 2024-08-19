@@ -7,14 +7,12 @@ module i2c_slave(
 parameter [6:0] device_address = 7'b1000111;
 
 parameter [1:0] STATE_IDLE      = 2'd0,//idle
-                STATE_DEV_ADDR  = 2'd1,//the slave addr match
+                STATE_DEV_ADDR  = 2'd1,//addr match
                 STATE_READ      = 2'd2,//the op=read 
-                STATE_WRITE     = 2'd3;//write the data in the reg 
+                STATE_WRITE     = 2'd3;//write data
 
 wire start_rst;
 wire stop_rst;
-//wire addr_act_bit;
-//wire ack_bit;
 wire address_detect;
 wire read_write_bit;
 wire write_strobe;
@@ -29,7 +27,9 @@ reg stop_resetter;
 reg [2:0]state;
 reg [8:0]buffer;
 reg [3:0]bit_counter;
+
 // Assignments
+
 assign start_rst = RST | start_resetter; // Detect the START for one cycle
 assign stop_rst = RST | stop_resetter;   // Detect the STOP for one cycle
 assign ack_bit = (bit_counter == 4'd9) && !start_detect; // The 9 bits ACK
@@ -38,9 +38,10 @@ assign read_write_bit = SDA; // The write or read operation 0=write and 1=read
 assign addr_buffer = buffer[6:0];
 assign out_buffer = buffer[7:0];
 assign out = (ack_bit) ? buffer[7:0] : 0 ;
-//////////////////////////////////////////// 
+
+
 ////////////////start detect /////////////// 
-////////////////////////////////////////////
+
 always @ (posedge start_rst or negedge SDA)
 begin
         if (start_rst)
@@ -56,12 +57,11 @@ begin
         else
                 start_resetter <= start_detect;
 end
-//the START just last for one cycle of SCL
+//the START just lasts for one cycle of SCL
 
-////////////////////////////////////////////////////// 
 ////////////////////state machine//////////////////// 
-//////////////////////////////////////////////////////
-always @ (posedge RST or negedge SCL)//jcyuan comment
+
+always @ (posedge RST or negedge SCL)
 begin
         if (RST)
                 state <= STATE_IDLE;
@@ -93,9 +93,9 @@ begin
         else if(stop_detect)  
                 state <= STATE_IDLE;
 end
-//////////////////////////////////////////// 
+
 ////////////////stop detect /////////////// 
-////////////////////////////////////////////
+
 always @ (posedge stop_rst or posedge SDA)
 begin   
         if (stop_rst)
@@ -112,7 +112,8 @@ begin
                 stop_resetter <= stop_detect;
 end
 
-/////////////////////count data ////////////// 
+/////////////////////count data ////////////////// 
+
 always @ (posedge SCL)
 begin
         if ( addr_act_bit || ack_bit || start_detect || (state == STATE_IDLE))
@@ -121,18 +122,17 @@ begin
                 bit_counter <= bit_counter + 4'h1;
 end
 
+
 ////////////////////load data to buffer ///////////////
 //counter to 9(from 0 to 8), one byte=8bits and one ack 
+
 always @ (posedge SCL)
         if (!ack_bit)
                 buffer <= {buffer[7:0], SDA};
                 //buffer[bit_counter] <= SDA;
 
-//always @ (posedge SCL)
-//  if(ack_bit && !start_detect)
-//    out <= buffer;
+////////////////////ack for address detection/////////////////////// 
 
-  /////////////////////////////////////////////////////// 
 always @ (posedge SCL)
    addr_act_bit = (bit_counter == 4'd5) && !start_detect && (state == STATE_DEV_ADDR);
 endmodule
