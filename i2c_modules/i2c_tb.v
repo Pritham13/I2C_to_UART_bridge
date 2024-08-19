@@ -35,11 +35,11 @@ module Slave_TB ();
 
   
   i2c_slave UUT
-    (.SDA(SDA),
-     .SCL(SCL),
-     .RST(rst),
-     .ack_bit(ack_bit),
-     .out(out)
+    (.i_SDA(SDA),
+     .i_SCL(SCL),
+     .i_RST(rst),
+     .o_ack_bit(ack_bit),
+     .o_out(out)
     );
 
   initial 
