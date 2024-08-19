@@ -7,16 +7,30 @@ module top (
   input reset,
   output TX
 );
-  wire en_read;
-  wire underflow;
+  reg uart_en;
+  
+  
   // Internal signals
+  
   wire [7:0] i2c_buffer;
   wire [7:0] uart_buff;
   wire en_write;
-  reg uart_en;
+  wire en_read;
+  wire underflow;  
   wire o_Tx_Done;
   wire o_Tx_Active;
+
+  //assignments 
+
   assign  en_read = (o_Tx_Done | en_write) & (~o_Tx_Active);
+
+// flip flop delay
+always @(posedge SCL) begin
+  uart_en <= ~underflow;
+end
+
+//instanstiations
+
 i2c_slave i2c (
           .SDA(SDA),
           .SCL(SCL),
@@ -35,9 +49,8 @@ fifo fifo (
       .reset(reset),
       .clk(SCL)
       );
-always @(posedge SCL) begin
-  uart_en <= ~underflow;
-end
+
+
 uart_tx uart (
               .i_Clock(SCL),
               .i_Tx_DV(uart_en),
@@ -46,4 +59,5 @@ uart_tx uart (
               .o_Tx_Serial(TX),
               .o_Tx_Done(o_Tx_Done)
             );
+
 endmodule
