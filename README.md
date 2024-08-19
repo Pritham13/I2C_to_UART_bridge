@@ -31,25 +31,18 @@ Data flow: I2C → FIFO → UART
 ## Inputs and Outputs
 
 ### Inputs:
-- `SCL`: I2C clock line
-- `SDA`: I2C data line
-- `reset`: System reset
+- `i_SCL`: I2C clock line
+- `i_SDA`: I2C data line
+- `i_reset`: System reset
 
 ### Output:
-- `TX`: UART transmit line
+- `o_TX`: UART transmit line
 
 ## Key Features
 
 - Unidirectional data flow from I2C to UART
 - FIFO buffering to manage data rate differences
 - Automatic flow control using FIFO underflow and UART transmission status
-
-## Dependencies
-
-This project requires the following modules:
-- `i2c_recv.v`: I2C slave receiver module
-- `uart_tx.v`: UART transmitter module
-- `fifo.v`: FIFO buffer module
 
 ## Operation
 
