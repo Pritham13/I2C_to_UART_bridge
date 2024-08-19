@@ -4,7 +4,7 @@
 
 module top (
   input SCL,SDA,
-  input clk,reset,
+  input reset,
   output TX
 );
   wire en_read;
