@@ -29,7 +29,7 @@ module uart_tx #(parameter CLKS_PER_BIT)
   reg          r_Tx_Active   = 0;
 
   assign w_Clock_Count_Flag =  (r_Clock_Count < CLKS_PER_BIT-1);
-
+  assign w_bit_index_flag = (r_Bit_Index < 7);
   //////////state machine////////// 
   always @ (posedge i_Clock)
     case (r_state)
@@ -75,7 +75,7 @@ module uart_tx #(parameter CLKS_PER_BIT)
             begin
               r_Clock_Count <= 0;
               // Check if we have sent out all bits
-              if (r_Bit_Index < 7)
+              if (w_bit_index_flag)
                 begin
                   r_Bit_Index <= r_Bit_Index + 1;
                   r_state   <= s_TX_DATA_BITS;
