@@ -5,10 +5,10 @@ module i2c_slave(
   output [7:0] o_out 
 );
 parameter [6:0] device_address = 7'b1000111;
-parameter [1:0] s_STATE_IDLE      = 2'd0,//idle
-                s_STATE_DEV_ADDR  = 2'd1,//addr match
-                s_STATE_READ      = 2'd2,//the op=read 
-                s_STATE_WRITE     = 2'd3;//write data
+parameter [1:0] s_IDLE      = 2'd0,//idle
+                s_DEV_ADDR  = 2'd1,//addr match
+                s_READ      = 2'd2,//the op=read 
+                s_WRITE     = 2'd3;//write data
 wire w_start_rst;
 wire w_stop_rst;
 wire w_address_detect;
@@ -53,31 +53,31 @@ end
 always @ (posedge i_RST or negedge i_SCL)
 begin
         if (i_RST)
-                r_state <= s_STATE_IDLE;
+                r_state <= s_IDLE;
         else if (r_start_detect)
-                r_state <= s_STATE_DEV_ADDR;
+                r_state <= s_DEV_ADDR;
         else if (r_addr_act_bit)//at the 9th cycle and change the state by ACK
         begin
                 case (r_state)
-                s_STATE_IDLE:
-                        r_state <= s_STATE_IDLE;
-                s_STATE_DEV_ADDR:
+                s_IDLE:
+                        r_state <= s_IDLE;
+                s_DEV_ADDR:
                         if (!w_address_detect)//addr don't match
-                                r_state <= s_STATE_IDLE;
+                                r_state <= s_IDLE;
                         else if (w_read_write_bit)// addr match and operation is read
-                                r_state <= s_STATE_READ;
+                                r_state <= s_READ;
                         else//addr match and operation is write
-                                r_state <= s_STATE_WRITE;
-                s_STATE_READ:
-                                r_state <= s_STATE_READ;
-                s_STATE_WRITE:
-                        r_state <= s_STATE_WRITE;//when the state is write the state 
+                                r_state <= s_WRITE;
+                s_READ:
+                                r_state <= s_READ;
+                s_WRITE:
+                        r_state <= s_WRITE;//when the state is write the state 
                 endcase
         end
         //if don't write and master send a stop,need to jump idle
         //the stop_detect is the next cycle of ACK
         else if(r_stop_detect)  
-                r_state <= s_STATE_IDLE;
+                r_state <= s_IDLE;
 end
 ////////////////stop detect /////////////// 
 always @ (posedge w_stop_rst or posedge i_SDA)
@@ -97,7 +97,7 @@ end
 /////////////////////count data ////////////////// 
 always @ (posedge i_SCL)
 begin
-        if ( r_addr_act_bit || o_ack_bit || r_start_detect || (r_state == s_STATE_IDLE))
+        if ( r_addr_act_bit || o_ack_bit || r_start_detect || (r_state == s_IDLE))
                 r_bit_counter <= 4'h0;
         else
                 r_bit_counter <= r_bit_counter + 4'h1;
@@ -110,5 +110,5 @@ always @ (posedge i_SCL)
                 //r_buffer[r_bit_counter] <= i_SDA;
 ////////////////////ack for address detection/////////////////////// 
 always @ (posedge i_SCL)
-   r_addr_act_bit = (r_bit_counter == 4'd5) && !r_start_detect && (r_state == s_STATE_DEV_ADDR);
+   r_addr_act_bit = (r_bit_counter == 4'd5) && !r_start_detect && (r_state == s_DEV_ADDR);
 endmodule
