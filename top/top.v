@@ -34,13 +34,13 @@ i2c_slave i2c (
           );
 fifo fifo (
       .i_data(w_i2c_buffer),
-      .en_write(w_en_write),
-      .en_read(w_en_read),
-      .overflow(),
-      .underflow(w_underflow),
+      .i_en_write(w_en_write),
+      .i_en_read(w_en_read),
+      .o_overflow(),
+      .o_underflow(w_underflow),
       .o_data(w_uart_buff),
-      .reset(i_reset),
-      .clk(i_SCL)
+      .i_reset(i_reset),
+      .i_clk(i_SCL)
       );
 uart_tx uart (
               .i_Clock(i_SCL),

@@ -14,14 +14,14 @@ module fifo_tb;
 
   // Instantiate the FIFO module
   fifo fifo_inst (
-    .data_in(data_in),
-    .en_read(en_read),
-    .reset(reset),
-    .clk(clk),
-    .en_write(en_write),
-    .data_out(data_out),
-    .underflow(underflow),
-    .overflow(overflow)
+    .i_data(data_in),
+    .i_en_read(en_read),
+    .i_reset(reset),
+    .i_clk(clk),
+    .i_en_write(en_write),
+    .o_data(data_out),
+    .o_underflow(underflow),
+    .o_overflow(overflow)
   );
 
   // Clock generation
