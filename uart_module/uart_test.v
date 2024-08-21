@@ -30,6 +30,8 @@ module uart_tx #(parameter CLKS_PER_BIT)
 
   assign w_Clock_Count_Flag =  (r_Clock_Count < CLKS_PER_BIT-1);
   assign w_bit_index_flag = (r_Bit_Index < 7);
+  assign o_Tx_Active = r_Tx_Active;
+  assign o_Tx_Done   = r_Tx_Done;
   //////////state machine////////// 
   always @ (posedge i_Clock)
     case (r_state)
@@ -60,7 +62,8 @@ module uart_tx #(parameter CLKS_PER_BIT)
           begin
             r_Clock_Count <= 0;
             r_state   <= s_TX_DATA_BITS;
-        end
+          end
+        end 
       
       s_TX_DATA_BITS :
         begin
@@ -86,6 +89,25 @@ module uart_tx #(parameter CLKS_PER_BIT)
                   r_state   <= s_TX_STOP_BIT;
                 end
             end
-        end // case: s_TX_DATA_BITS
-      
-
+        end // case: s_TX_DATA_BIT
+        s_TX_STOP_BIT :
+          begin
+            o_Tx_Serial <= 1'b1;
+             
+            // Wait CLKS_PER_BIT-1 clock cycles for Stop bit to finish
+            if (w_Clock_Count_Flag)
+              begin
+                r_Clock_Count <= r_Clock_Count + 1;
+                r_SM_Main     <= s_TX_STOP_BIT;
+              end
+            else
+              begin
+                r_Tx_Done     <= 1'b1;
+                r_Clock_Count <= 0;
+                r_Tx_Active   <= 1'b0;
+                r_SM_Main     <= s_IDLE;
+              end
+          end // case: s_Tx_STOP_BIT
+          default :
+            r_SM_Main <= s_IDLE;
+          endcase
