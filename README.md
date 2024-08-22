@@ -11,6 +11,7 @@ This project implements a unidirectional bridge that converts I2C communication 
 - FIFO
     - [FIFO module](/fifo_module/fifo.v)
     - [FIFO README](/fifo_module/README.md)
+    - [FIFO depth Calculation](/fifo_module/FIFO_depth_calc.md)
 
 ## Overview
 
