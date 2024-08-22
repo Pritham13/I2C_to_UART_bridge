@@ -8,7 +8,7 @@ module fifo (
 reg [7:0] r_register [0:15];
 reg [4:0] r_ptr_wr;
 integer r_i;
-localparam s_Size = 16;
+localparam s_Size = 75;
 localparam s_Size1 = s_Size-1;
 localparam s_count = 1;
 assign o_overflow = (r_ptr_wr != 0) ? 0 : 1;
