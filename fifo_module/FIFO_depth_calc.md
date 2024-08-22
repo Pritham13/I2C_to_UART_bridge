@@ -23,7 +23,7 @@ $$
 
 ## Bytes Transmitted by UART in the Same Duration
 
-The number of bytes transmitted by UART in \(2.25 \times 10^{-3}\) seconds is calculated as:
+The number of bytes transmitted by UART in 2.25 * 10 ^ -3 seconds is calculated as:
 
 $$
 \text{{Bytes transmitted by UART}} = 2.25 \times 10^{-3} \times \frac{115200}{10} = 2.25 \times 10^{-3} \times 11520 = 25.9 \approx 25
