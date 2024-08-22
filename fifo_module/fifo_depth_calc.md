@@ -22,10 +22,10 @@ To determine the FIFO depth, consider how many bits might accumulate in the FIFO
 
 Assume that the FIFO needs to buffer at least one full byte (8 bits) from the UART:
 $$
-\text{FIFO Depth (in bytes)} = \text{Rate Ratio} \times \text{Size of UART data}
+\text{FIFO Depth (bytes)} = \text{Rate Ratio} \times \text{UART data size (bytes)}
 $$
 $$
-\text{FIFO Depth (in bytes)} = 217.0139 \times 1 \text{ byte} \approx 217 \text{ bytes}
+\text{FIFO Depth (bytes)} = 217.0139 \times 1 \approx 217 \text{ bytes}
 $$
 
 However, a practical implementation might round this up to a power of two for simplicity:
