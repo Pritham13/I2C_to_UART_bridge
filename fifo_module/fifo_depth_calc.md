@@ -1,27 +1,19 @@
-# FIFO Depth calculation
+## FIFO Depth Calculation for Buffering Between I2C (25 MHz) and UART (115200 baud)
 
 To calculate the required FIFO depth for a buffer between the I2C (25 MHz) and UART (115200 baud) interfaces, you need to consider the data rate difference and the size of the data being transmitted. The FIFO depth should be sufficient to accommodate the difference in data rates, ensuring smooth data flow without overflow or underflow.
-
-### I2C Frequency 
-- ### 1. **I2C Clock Rate Calculation**:
-- Given clock period for I2C = 40 ns 
-- Clock frequency = 1/40 = 25MHz 
-### 1. **Data Rate Difference**:
-- **I2C Frequency**: 25 MHz
-- **UART Baud Rate**: 115200 baud
 
 ### 1. **Data Rate Difference**:
 - **I2C Clock Rate**: 25 MHz
 - **UART Baud Rate**: 115200 baud
 
 ### 2. **Bits Transmitted per Second**:
-- **I2C**: `25 x 10^6` bits per second.
-- **UART**: `115200` bits per second.
+- **I2C**: 25 mbps
+- **UART**: 115200 bps.
 
 ### 3. **Data Rate Ratio**:
-\[
+$$
 \text{Rate Ratio} = \frac{25 \times 10^6 \text{ bits/sec}}{115200 \text{ bits/sec}} \approx 217.0139
-\]
+$$
 
 This means that for every 1 bit transmitted over UART, approximately 217 bits could be transmitted over I2C.
 
@@ -29,12 +21,14 @@ This means that for every 1 bit transmitted over UART, approximately 217 bits co
 To determine the FIFO depth, consider how many bits might accumulate in the FIFO before the UART can transmit them.
 
 Assume that the FIFO needs to buffer at least one full byte (8 bits) from the UART:
+$$
+\text{FIFO Depth (in bytes)} = \text{Rate Ratio} \times \text{Size of UART data}
+$$
+$$
+\text{FIFO Depth (in bytes)} = 217.0139 \times 1 \text{ byte} \approx 217 \text{ bytes}
+$$
 
-\[
-\text{FIFO Depth (in bytes)} = \text{Rate Ratio} \times \text{Size of UART data} = 217.0139 \times 1 \text{ byte}
-\]
-
-Thus, the FIFO depth in terms of bytes should be around 217 bytes. However, a practical implementation might round this up to a power of two for simplicity:
+However, a practical implementation might round this up to a power of two for simplicity:
 
 - **FIFO Depth**: 256 bytes (which is a common size and provides a buffer margin).
 
