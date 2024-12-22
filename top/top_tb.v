@@ -4,15 +4,8 @@
 module top_tb ();
 
   reg clk;
-  
-  wire SDA;
-  wire SCL;
-
-  pullup(SDA);
-  pullup(SCL);
-  
-
-   
+  reg SDA;
+  reg SCL;
   reg [6:0] addressToSend 	= 7'b1000111; 	//101_1011
   reg readWite 				= 1'b0; 		//write
   reg [7:0] dataToSend1 		= 8'b0110_0111; //103 = 0x67
@@ -28,11 +21,11 @@ module top_tb ();
   
   initial begin
 		clk = 1;
-    	force SCL = clk;
+    	 SCL = clk;
     #5
 		forever begin
 			#10 clk =  ~clk;
-          	force SCL = clk;
+          	 SCL = clk;
 		end		
 	end
 
@@ -58,7 +51,7 @@ module top_tb ();
 
       // Set SDA Low to start
 
-      force SDA = 0;
+       SDA = 0;
 
       #10;
 
@@ -67,49 +60,49 @@ module top_tb ();
       for(ii=6; ii>=0; ii=ii-1)
         begin
 
-          force SDA = addressToSend[ii];#20;
+           SDA = addressToSend[ii];#20;
         
         end
       
       $display("Read/Write %h SDA: %h", readWite, SDA);
       
-       force SDA = readWite;
+        SDA = readWite;
       
-      #20 force SDA = 0;
+      #20  SDA = 0;
       
       $display("SDA: %h", SDA);
       
       for(ii=7; ii>=0; ii=ii-1)
         begin
       
-          #20 force SDA = dataToSend1[ii];
+          #20  SDA = dataToSend1[ii];
       
         end 
       
-      #20;force SDA =0;
+      #20; SDA =0;
 
             
       for(ii=7; ii>=0; ii=ii-1)
         begin
       
-          #20 force SDA = dataToSend2[ii];
+          #20  SDA = dataToSend2[ii];
       
         end
       
-      #20;force SDA =0;            
+      #20; SDA =0;            
       
       for(ii=7; ii>=0; ii=ii-1)
         begin
       
-          #20 force SDA = dataToSend3[ii];
+          #20  SDA = dataToSend3[ii];
       
         end 
 
-      #20;force SDA =0; 
+      #20; SDA =0; 
       
       #30 
       //changing SDA to 1 when SCL is 1 to stop
-     force SDA = 1;
+      SDA = 1;
       //delay for uart to transmit
       
       #1000;
