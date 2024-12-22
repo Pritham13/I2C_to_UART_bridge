@@ -6,7 +6,7 @@ module fifo (
     output reg [7:0] o_data
 );
 reg [7:0] r_register [0:15];
-reg [4:0] r_ptr_wr;
+reg [3:0] r_ptr_wr;
 integer r_i;
 localparam s_Size = 75;
 localparam s_Size1 = s_Size-1;
@@ -45,7 +45,7 @@ begin
     begin
         for (r_i = 0; r_i < s_Size; r_i = r_i + s_count)
         begin
-            r_register[r_i] = 8'd0; 
+            r_register[r_i] <= 8'd0; 
         end 
         o_data <= 8'b0;
         r_ptr_wr <= 4'd15;
